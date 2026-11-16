@@ -5,7 +5,7 @@ pipeline {
     environment {
         PATH = "/usr/local/bin:${env.PATH}"
         IMAGE_NAME = "petyaivanchova/cloudops-api"
-        EC2_HOST = "13.53.41.22"
+        EC2_HOST = "16.170.236.4"
     }
 
     stages {
