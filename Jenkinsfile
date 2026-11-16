@@ -4,6 +4,7 @@ pipeline {
 
     environment {
         PATH = "/usr/local/bin:${env.PATH}"
+        IMAGE_NAME = "petyaivanchova/cloudops-api"
     }
 
     stages {
@@ -27,17 +28,33 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t cloudops-api:latest .'
+                sh 'docker build -t $IMAGE_NAME:$BUILD_NUMBER .'
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-credentials',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_TOKEN'
+                )]) {
+                    sh '''
+                        echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker push "$IMAGE_NAME:$BUILD_NUMBER"
+                        docker logout
+                    '''
+                }
             }
         }
     }
 
     post {
         success {
-            echo 'Pipeline completed successfully!'
+            echo 'CI pipeline completed successfully!'
         }
         failure {
-            echo 'Pipeline failed!'
+            echo 'CI pipeline failed!'
         }
     }
 }
