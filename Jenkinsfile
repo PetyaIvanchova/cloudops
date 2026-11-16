@@ -27,10 +27,10 @@ pipeline {
         }
 
         stage('Build Docker Image') {
-            steps {
-                sh 'docker build -t $IMAGE_NAME:$BUILD_NUMBER .'
-            }
-        }
+    steps {
+        sh 'docker build --platform linux/amd64 -t $IMAGE_NAME:$BUILD_NUMBER .'
+    }
+}
 
         stage('Push to Docker Hub') {
             steps {
